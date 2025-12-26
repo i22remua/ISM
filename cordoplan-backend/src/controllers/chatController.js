@@ -1,0 +1,47 @@
+// cordoplan-backend/src/controllers/chatController.js
+const db = require('../db');
+
+// ----------------------------------------------------------------------
+// LÓGICA DEL CHAT (CU6)
+// ----------------------------------------------------------------------
+
+// CU6: Enviar un mensaje a un amigo
+exports.enviarMensaje = async (req, res) => {
+    const { id_usuario_peticion: id_emisor } = req.user;
+    const { id_receptor, mensaje } = req.body;
+
+    if (!id_receptor || !mensaje) {
+        return res.status(400).json({ message: 'Faltan datos (receptor o mensaje).' });
+    }
+
+    try {
+        const query = 'INSERT INTO ChatMensajes (id_emisor, id_receptor, mensaje) VALUES (?, ?, ?)';
+        await db.execute(query, [id_emisor, id_receptor, mensaje]);
+        
+        res.status(201).json({ message: 'Mensaje enviado con éxito.' });
+    } catch (error) {
+        console.error('Error al enviar mensaje:', error);
+        res.status(500).json({ message: 'Error interno del servidor al enviar el mensaje.' });
+    }
+};
+
+// CU6: Obtener el historial de chat con un amigo
+exports.getHistorialChat = async (req, res) => {
+    const { id_usuario_peticion: id_usuario_actual } = req.user;
+    const { id_amigo } = req.params;
+
+    try {
+        const query = `
+            SELECT id_mensaje, id_emisor, id_receptor, mensaje, timestamp
+            FROM ChatMensajes
+            WHERE (id_emisor = ? AND id_receptor = ?) OR (id_emisor = ? AND id_receptor = ?)
+            ORDER BY timestamp ASC
+        `;
+        const [mensajes] = await db.execute(query, [id_usuario_actual, id_amigo, id_amigo, id_usuario_actual]);
+        
+        res.status(200).json(mensajes);
+    } catch (error) {
+        console.error('Error al obtener el historial del chat:', error);
+        res.status(500).json({ message: 'Error interno del servidor al recuperar los mensajes.' });
+    }
+};

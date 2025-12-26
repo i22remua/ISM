@@ -1,0 +1,30 @@
+{
+  "name": "cordoplan-backend",
+  "version": "1.0.0",
+  "description": "API REST para CordoPlan (Aforo en Tiempo Real, Locales, MySQL).",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js", 
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "flutter",
+    "node",
+    "express",
+    "mysql",
+    "nfc"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mysql2": "^3.15.3",
+    "firebase-admin": "^12.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0" 
+  }
+}

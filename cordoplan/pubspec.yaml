@@ -1,0 +1,38 @@
+name: cordoplan
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # --- HTTP, State Management, and Core Firebase ---
+  http: ^1.2.1                # For consuming the Node.js API
+  provider: ^6.1.2            # State management
+  firebase_core: ^2.31.0      # Core Firebase initialization (Updated)
+  firebase_auth: ^4.19.5      # For Authentication (Updated)
+  cloud_firestore: ^4.17.3    # For the Social Chat feature (Updated)
+
+  # --- Mapping, Location, and NFC (Project Specific Requirements) ---
+  google_maps_flutter: ^2.7.0 # For map visualization
+  geolocator: ^12.0.0         # For user location (Corrected)
+  nfc_manager: ^4.0.0         # For NFC functionality
+
+  # --- Utility Packages ---
+  intl: ^0.19.0 # Added for date formatting
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0 # Updated
+
+flutter:
+  uses-material-design: true

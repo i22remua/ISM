@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "651442032096",
+    "project_id": "cordoplan-uco",
+    "storage_bucket": "cordoplan-uco.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651442032096:android:077b622db7002a8f676f85",
+        "android_client_info": {
+          "package_name": "com.example.cordoplan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx4xbXGMqjzXp46MYgwFLlyny5SSPuBEo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
