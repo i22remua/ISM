@@ -17,9 +17,9 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       # Asegura que el script de inicialización SQL se ejecute
-      - ./init_db:/docker-entrypoint-initdb.d/ 
+      - ./init_db:/docker-entrypoint-initdb.d/
     restart: always
-    
+
   # ----------------------------------------------------
   # 2. Servicio del Backend Node.js
   # ----------------------------------------------------
@@ -28,7 +28,8 @@ services:
     container_name: cordoplan_api
     command: npm start # Ejecuta src/app.js a través del script 'start'
     ports:
-      - "3000:3000" 
+      # FIX: Se cambia a 0.0.0.0 para que sea accesible desde la red local (móvil)
+      - "0.0.0.0:3000:3000"
     environment:
       DB_HOST: mysql_db # Host interno para Node.js
       DB_USER: ${DB_USER}
@@ -37,8 +38,9 @@ services:
       DB_NAME: ${DB_NAME}
       PORT: ${PORT}
     volumes:
-      # Mapeo de volumen para hot-reloading
+      # Mapeo para hot-reloading: sincroniza el código, pero aísla node_modules
       - .:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - mysql_db
     restart: always

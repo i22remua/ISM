@@ -1,5 +1,24 @@
-// cordoplan-backend/src/controllers/chatController.js
+
 const db = require('../db');
+
+// Lista de palabras prohibidas para el chat
+const PALABRAS_PROHIBIDAS = [
+    'puto', 'puta', 'mierda', 'cabron', 'cabrón', 'gilipollas', 'maricon', 'maricón', 
+    'zorra', 'joder', 'coño', 'pendejo', 'pendeja', 'idiota', 'imbecil', 'imbécil',
+    'follar', 'polla', 'tonto', 'tonta', 'estupido', 'estúpido', 'mamon', 'mamón'
+];
+
+// Función para comprobar si un mensaje contiene palabras prohibidas
+const contienePalabrasProhibidas = (texto) => {
+    if (!texto) return false;
+    const textoNormalizado = texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    return PALABRAS_PROHIBIDAS.some(palabra => {
+        const palabraNormalizada = palabra.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const regex = new RegExp(`\\b${palabraNormalizada}\\b`, 'i');
+        return regex.test(textoNormalizado);
+    });
+};
 
 // ----------------------------------------------------------------------
 // LÓGICA DEL CHAT (CU6)
@@ -13,6 +32,14 @@ exports.enviarMensaje = async (req, res) => {
     if (!id_receptor || !mensaje) {
         return res.status(400).json({ message: 'Faltan datos (receptor o mensaje).' });
     }
+
+    // --- NUEVO: Filtro de palabras prohibidas para el chat ---
+    if (contienePalabrasProhibidas(mensaje)) {
+        return res.status(400).json({ 
+            message: 'No puedes enviar este mensaje porque contiene lenguaje inapropiado.' 
+        });
+    }
+    // --------------------------------------------------------
 
     try {
         const query = 'INSERT INTO ChatMensajes (id_emisor, id_receptor, mensaje) VALUES (?, ?, ?)';

@@ -1,10 +1,10 @@
-// lib/screens/owner/create_local_screen.dart
+
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // Necesario para LatLng
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../services/local_api_service.dart';
 import '../../../models/local_model.dart';
-import 'map_picker_screen.dart'; // Importa la nueva pantalla
+import 'map_picker_screen.dart';
 
 class CreateLocalScreen extends StatefulWidget {
   final Local? existingLocal;
@@ -19,9 +19,10 @@ class _CreateLocalScreenState extends State<CreateLocalScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _capacityController = TextEditingController();
+  final _addressController = TextEditingController(); // Nuevo controlador
   final LocalApiService _apiService = LocalApiService();
   
-  LatLng? _selectedLocation; // Almacena la ubicación seleccionada
+  LatLng? _selectedLocation;
   bool _isLoading = false;
   String _pageTitle = 'Registrar Nuevo Local';
 
@@ -29,7 +30,7 @@ class _CreateLocalScreenState extends State<CreateLocalScreen> {
   void initState() {
     super.initState();
     if (widget.existingLocal != null) {
-      _loadLocalData(widget.existingLocal!);
+      _loadLocalData(widget.existingLocal!); // Carga los datos existentes
       _pageTitle = 'Modificar Local';
     } 
   }
@@ -38,11 +39,10 @@ class _CreateLocalScreenState extends State<CreateLocalScreen> {
     _nameController.text = local.nombre;
     _descriptionController.text = local.descripcion;
     _capacityController.text = local.aforoMaximo.toString();
-    // Carga la ubicación existente para mostrarla
+    _addressController.text = local.ubicacion; // Carga la dirección
     _selectedLocation = LatLng(local.latitud, local.longitud);
   }
 
-  // Abre la pantalla para seleccionar la ubicación en el mapa
   void _navigateToMapPicker() async {
     final LatLng? result = await Navigator.of(context).push<LatLng>(
       MaterialPageRoute(
@@ -61,10 +61,10 @@ class _CreateLocalScreenState extends State<CreateLocalScreen> {
 
   void _handleSubmit() async {
     if (_selectedLocation == null) {
-       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Por favor, selecciona la ubicación del local en el mapa.')),
-        );
-        return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, selecciona la ubicación del local en el mapa.')),
+      );
+      return;
     }
 
     setState(() { _isLoading = true; });
@@ -74,9 +74,10 @@ class _CreateLocalScreenState extends State<CreateLocalScreen> {
         'nombre': _nameController.text,
         'descripcion': _descriptionController.text,
         'aforo_maximo': int.tryParse(_capacityController.text) ?? 0,
-        'tipo_ocio': 'Discoteca', // Simplificado
+        'ubicacion': _addressController.text, // Envía la dirección
         'latitud': _selectedLocation!.latitude,
         'longitud': _selectedLocation!.longitude,
+        'tipo_ocio': 'Discoteca', // Simplificado
       };
 
       if (widget.existingLocal == null) {
@@ -113,23 +114,26 @@ class _CreateLocalScreenState extends State<CreateLocalScreen> {
             CustomTextField(controller: _descriptionController, labelText: 'Descripción', icon: Icons.description),
             const SizedBox(height: 16),
             CustomTextField(controller: _capacityController, labelText: 'Aforo Máximo', icon: Icons.people_outline, keyboardType: TextInputType.number),
+            const SizedBox(height: 16),
+            
+            // Nuevo campo para la dirección
+            CustomTextField(controller: _addressController, labelText: 'Dirección del Local', icon: Icons.location_on_outlined),
             const SizedBox(height: 24),
 
-            // Selección de Ubicación
+            // Selección de Ubicación en el mapa
             ListTile(
               leading: const Icon(Icons.map, color: Colors.blueAccent),
-              title: const Text('Ubicación del Local'),
+              title: const Text('Abrir Mapa'),
               subtitle: Text(
                 _selectedLocation != null
-                    ? 'Lat: ${_selectedLocation!.latitude.toStringAsFixed(4)}, Lon: ${_selectedLocation!.longitude.toStringAsFixed(4)}'
-                    : 'No seleccionada',
+                    ? 'Ubicación seleccionada: (${_selectedLocation!.latitude.toStringAsFixed(4)}, ${_selectedLocation!.longitude.toStringAsFixed(4)})'
+                    : 'Pulsa para elegir la ubicación en el mapa',
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: _navigateToMapPicker,
             ),
             const SizedBox(height: 40),
 
-            // Botón de Enviar
             ElevatedButton(
               onPressed: _isLoading ? null : _handleSubmit,
               style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),

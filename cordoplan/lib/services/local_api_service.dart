@@ -33,8 +33,8 @@ class LocalApiService {
 
   // RF-U03: Búsqueda de locales por query (Pública)
   Future<List<Local>> searchLocales(String query) async {
-    // Nota: El endpoint es GET /api/locales/search?query={query}
-    final url = '$endpointLocales/search?query=$query';
+    // FIX: Corregido para apuntar al endpoint correcto: GET /api/locales?query={query}
+    final url = '$endpointLocales?query=$query';
     final response = await _httpClient.get(url);
     return _mapResponseList<Local>(response, Local.fromJson);
   }
@@ -122,11 +122,33 @@ class LocalApiService {
 
   // RF-P05 / CU12: Cancelar evento
   Future<Map<String, dynamic>> cancelEvent(int idEvento) async {
-    // Usar el método DELETE
-    final response = await _httpClient.delete(
+    // FIX: Cambiado a POST para coincidir con la ruta del backend
+    return await _httpClient.post(
         endpointCancelEvent(idEvento),
+        body: {},
         requireAuth: true
     );
-    return response;
+  }
+
+  // ----------------------------------------------------------------------
+  // CONTROL DE AFORO (NFC)
+  // ----------------------------------------------------------------------
+
+  // Registra una entrada por NFC y devuelve el nuevo estado del aforo
+  Future<Map<String, dynamic>> registrarEntradaNfc(int idLocal) async {
+    return await _httpClient.post(
+      endpointAforoEntrada(idLocal),
+      body: {},
+      requireAuth: true,
+    );
+  }
+
+  // Registra una salida por NFC y devuelve el nuevo estado del aforo
+  Future<Map<String, dynamic>> registrarSalidaNfc(int idLocal) async {
+    return await _httpClient.post(
+      endpointAforoSalida(idLocal),
+      body: {},
+      requireAuth: true,
+    );
   }
 }

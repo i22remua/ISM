@@ -1,8 +1,8 @@
-// lib/screens/auth/login_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/firebase_auth_service.dart';
-import '../../providers/user_provider.dart'; // Importa el UserProvider
+import '../../providers/user_provider.dart';
 import '../home/home_map_screen.dart';
 import 'register_screen.dart';
 
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: Theme.of(context).colorScheme.error),
     );
   }
 
@@ -46,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text,
       );
 
-      // Guarda los datos del usuario en el UserProvider
       Provider.of<UserProvider>(context, listen: false).setUser(userData);
 
       Navigator.of(context).pushReplacement(
@@ -59,7 +58,9 @@ class _LoginScreenState extends State<LoginScreen> {
       String errorMessage = e.toString().contains(':') ? e.toString().split(':')[1].trim() : e.toString();
       _showErrorSnackbar('Error de inicio de sesión: $errorMessage');
     } finally {
-      setState(() { _isLoading = false; });
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
     }
   }
 
@@ -71,57 +72,81 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('CordoPlan - Iniciar Sesión'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                'Bienvenido a CordoPlan',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 40),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Logo de la aplicación
+                Image.asset(
+                  'assets/images/logo.png', 
+                  height: 180, // Ajusta la altura según tus preferencias
                 ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Contraseña',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
+                const SizedBox(height: 32),
+
+                // Título de bienvenida
+                Text(
+                  'Bienvenido de nuevo',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                obscureText: true,
-              ),
-              SizedBox(height: 32),
-              _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _handleSignIn,
-                      style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 16)),
-                      child: Text('Iniciar Sesión', style: TextStyle(fontSize: 18)),
-                    ),
-              SizedBox(height: 16),
-              TextButton(
-                onPressed: _navigateToRegister,
-                child: Text('¿No tienes cuenta? Regístrate aquí', style: TextStyle(color: Colors.blue)),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  'Inicia sesión para continuar',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 32),
+
+                // Campo de Email
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email_outlined),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 16),
+
+                // Campo de Contraseña
+                TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Contraseña',
+                    prefixIcon: Icon(Icons.lock_outline),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 32),
+
+                // Botón de Iniciar Sesión
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: _handleSignIn,
+                        child: const Text('Iniciar Sesión'),
+                      ),
+                const SizedBox(height: 16),
+
+                // Enlace de registro
+                TextButton(
+                  onPressed: _navigateToRegister,
+                  child: Text(
+                    '¿No tienes cuenta? Regístrate aquí',
+                    style: TextStyle(color: theme.colorScheme.secondary),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

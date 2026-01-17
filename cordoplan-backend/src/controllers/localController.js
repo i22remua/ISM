@@ -314,3 +314,86 @@ exports.verEventosLocal = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
+
+// ----------------------------------------------------------------------
+// CONTROL DE AFORO (NFC)
+// ----------------------------------------------------------------------
+
+// Función genérica para gestionar el aforo (entrada/salida)
+const gestionarAforo = async (idLocal, idUsuario, tipo) => {
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // 1. Obtener el local y bloquear la fila para evitar concurrencia
+        const [localCheck] = await connection.execute('SELECT * FROM Locales WHERE id_local = ? FOR UPDATE', [idLocal]);
+
+        if (localCheck.length === 0) {
+            throw { status: 404, message: 'Local no encontrado.' };
+        }
+
+        const local = localCheck[0];
+
+        // FIX: Se elimina la comprobación de permisos para que todos los usuarios puedan registrar aforo
+        // if (rolUsuario !== 'Administrador' && local.id_propietario !== idUsuario) {
+        //     throw { status: 403, message: 'No tienes permiso para modificar el aforo de este local.' };
+        // }
+
+        let nuevoAforo = local.aforo_actual;
+
+        if (tipo === 'entrada') {
+            if (nuevoAforo >= local.aforo_maximo) {
+                throw { status: 409, message: 'El aforo ya está al máximo. No se puede registrar la entrada.' };
+            }
+            nuevoAforo++;
+        } else { // tipo === 'salida'
+            if (nuevoAforo <= 0) {
+                throw { status: 409, message: 'El aforo ya es cero. No se puede registrar la salida.' };
+            }
+            nuevoAforo--;
+        }
+
+        // 3. Actualizar el aforo en la base de datos
+        await connection.execute('UPDATE Locales SET aforo_actual = ? WHERE id_local = ?', [nuevoAforo, idLocal]);
+
+        await connection.commit();
+
+        return {
+            message: `Aforo actualizado con éxito. Nuevo aforo: ${nuevoAforo}`,
+            aforoActual: nuevoAforo,
+            aforoMaximo: local.aforo_maximo,
+            nombreLocal: local.nombre
+        };
+
+    } catch (error) {
+        if (connection) await connection.rollback();
+        throw error; // Re-lanzar para que el controlador principal lo capture
+    } finally {
+        if (connection) connection.release();
+    }
+};
+
+exports.registrarEntradaNfc = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { id_usuario_peticion } = req.user;
+        const resultado = await gestionarAforo(id, id_usuario_peticion, 'entrada');
+        res.status(200).json(resultado);
+    } catch (error) {
+        console.error('Error al registrar entrada por NFC:', error);
+        res.status(error.status || 500).json({ message: error.message || 'Error interno del servidor.' });
+    }
+};
+
+exports.registrarSalidaNfc = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { id_usuario_peticion } = req.user;
+        const resultado = await gestionarAforo(id, id_usuario_peticion, 'salida');
+        res.status(200).json(resultado);
+    } catch (error) {
+        console.error('Error al registrar salida por NFC:', error);
+        res.status(error.status || 500).json({ message: error.message || 'Error interno del servidor.' });
+    }
+};

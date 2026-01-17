@@ -3,29 +3,30 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const firebaseAdmin = require('firebase-admin');
-const dbPool = require('./db'); // Importar el pool de DB
+const dbPool = require('./db'); // Importar el pool de DB [cite: 150]
+const cors = require('cors'); // Recomendado para evitar bloqueos de red
 
 // 1. CARGA DE CONFIGURACIÓN Y SERVICIOS
 // =====================================
 
-dotenv.config();
+dotenv.config(); // Carga DB_HOST, DB_USER, etc. [cite: 144, 145]
 
-// Importación de Rutas
-const userRoutes = require('./routes/userRoutes');   
+// Importación de Rutas [cite: 162]
+const userRoutes = require('./routes/userRoutes');   // [cite: 165, 168]
 const ownerRoutes = require('./routes/ownerRoutes');
-const adminRoutes = require('./routes/adminRoutes'); 
-const localRoutes = require('./routes/localRoutes'); 
-const foroRoutes = require('./routes/foroRoutes'); // Importación de las rutas del foro
+const adminRoutes = require('./routes/adminRoutes'); // [cite: 163, 166]
+const localRoutes = require('./routes/localRoutes'); // [cite: 164, 167]
+const foroRoutes = require('./routes/foroRoutes');
 
-// Inicialización de Express
+// Inicialización de Express [cite: 148, 149]
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 2. CONFIGURACIÓN DE FIREBASE ADMIN (RNF-06: Seguridad)
+// 2. CONFIGURACIÓN DE FIREBASE ADMIN (RNF-06: Seguridad [cite: 41, 42])
 // ====================================================================
 
 try {
-    const serviceAccount = require('../cordoplan-uco-service-account.json'); 
+    const serviceAccount = require('../cordoplan-uco-service-account.json');
     firebaseAdmin.initializeApp({
         credential: firebaseAdmin.credential.cert(serviceAccount)
     });
@@ -38,15 +39,16 @@ try {
 // 3. MIDDLEWARE Y MONTAJE DE RUTAS
 // ====================================================================
 
-app.use(express.json()); 
+app.use(cors()); // Permite peticiones desde dispositivos externos en la red local
+app.use(express.json()); // Middleware para parsear JSON [cite: 147]
 
-// Rutas específicas para roles y funcionalidades
-app.use('/api/users', userRoutes);     
+// Rutas específicas para roles y funcionalidades [cite: 4, 154]
+app.use('/api/users', userRoutes);
 app.use('/api/owner', ownerRoutes);
-app.use('/api/admin', adminRoutes);   
-app.use('/api/foro', foroRoutes);     // Registro de las rutas del foro de locales
+app.use('/api/admin', adminRoutes);
+app.use('/api/foro', foroRoutes);
 
-// Rutas más generales de locales (públicas)
+// Rutas generales de locales [cite: 167]
 app.use('/api/locales', localRoutes);
 
 app.get('/', (req, res) => {
@@ -57,23 +59,25 @@ app.get('/', (req, res) => {
 // ====================================================================
 
 const startServer = () => {
-    app.listen(PORT, () => {
+    // CAMBIO CLAVE: Escuchar en '0.0.0.0' para ser visible por el Samsung A25
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 Servidor CordoPlan Node.js corriendo en el puerto ${PORT}`);
+        console.log(`📡 Accesible en red local (asegúrate de usar tu IP en Flutter)`);
     });
 };
 
 const connectWithRetry = async (retries = 5, delay = 5000) => {
     while (retries > 0) {
         try {
-            const connection = await dbPool.getConnection();
+            const connection = await dbPool.getConnection(); // [cite: 150]
             console.log('✅ Conexión exitosa al Pool de MySQL.');
             connection.release();
-            return; // Conexión exitosa, salir de la función
+            return;
         } catch (err) {
-            console.error(`❌ Error al conectar al Pool de MySQL: ${err.message}. Reintentando en ${delay / 1000}s... (${retries - 1} reintentos restantes)`);
+            console.error(`❌ Error al conectar al Pool de MySQL: ${err.message}. Reintentando en ${delay / 1000}s...`);
             retries--;
             if (retries === 0) {
-                console.error('❌ No se pudo conectar a la base de datos después de varios reintentos. Saliendo...');
+                console.error('❌ No se pudo conectar a la DB. Saliendo...');
                 process.exit(1);
             }
             await new Promise(res => setTimeout(res, delay));
@@ -81,13 +85,11 @@ const connectWithRetry = async (retries = 5, delay = 5000) => {
     }
 };
 
-// 5. INICIO DE LA APLICACIÓN
+// 5. INICIO DE LA APLICACIÓN [cite: 148]
 // ====================================================================
 
-// Primero, intentar conectar a la base de datos. Si tiene éxito, iniciar el servidor.
 connectWithRetry().then(() => {
     startServer();
 });
 
-// Exportar 'app' para pruebas (opcional)
 module.exports = app;

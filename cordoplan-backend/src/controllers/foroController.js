@@ -1,11 +1,33 @@
-// cordoplan-backend/src/controllers/foroController.js
 const db = require('../db');
+
+// Lista de palabras prohibidas normalizada (sin acentos)
+const PALABRAS_PROHIBIDAS = [
+    'puto', 'puta', 'mierda', 'cabron', 'gilipollas', 'maricon', 
+    'zorra', 'joder', 'cono', 'pendejo', 'idiota', 'imbecil',
+    'follar', 'polla', 'tonto', 'estupido', 'mamon'
+].map(p => p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
+// Función mejorada para comprobar palabras prohibidas
+const contienePalabrasProhibidas = (texto) => {
+    if (!texto) return false;
+    
+    // 1. Normalizamos el texto: minúsculas y sin acentos
+    const textoNormalizado = texto.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    
+    // 2. Quitamos signos de puntuación para que "puta!!!" se convierta en "puta"
+    const textoLimpio = textoNormalizado.replace(/[^\w\s]/gi, ' ');
+
+    // 3. Dividimos en palabras y comprobamos
+    const palabrasEnMensaje = textoLimpio.split(/\s+/);
+    
+    return palabrasEnMensaje.some(palabra => PALABRAS_PROHIBIDAS.includes(palabra));
+};
 
 // Obtener todos los mensajes del foro de un local
 exports.getMessages = async (req, res) => {
-    // FIX: El parámetro de la ruta es 'localId' según se definió en el frontend.
     const { localId } = req.params;
-
     try {
         const query = `
             SELECT
@@ -24,45 +46,33 @@ exports.getMessages = async (req, res) => {
         res.status(200).json(mensajes);
     } catch (error) {
         console.error('Error al obtener los mensajes del foro:', error);
-        res.status(500).json({
-            message: 'Error interno del servidor al recuperar los mensajes.',
-            error: error.message
-        });
+        res.status(500).json({ message: 'Error al recuperar mensajes.' });
     }
 };
 
-// Publicar un nuevo mensaje en el foro de un local
+// Publicar un nuevo mensaje con filtro mejorado
 exports.postMessage = async (req, res) => {
     const { localId } = req.params;
     const { mensaje } = req.body;
-    // FIX: 'id_usuario_peticion' viene directamente de la propiedad del middleware de autenticación.
     const { id_usuario_peticion } = req.user;
 
-    // Logs para depuración
-    console.log(`>> Publicando en foro del local ${localId}`);
-    console.log(`   - Usuario ID: ${id_usuario_peticion}`);
-    console.log(`   - Mensaje: ${mensaje}`);
-
     if (!mensaje || mensaje.trim() === '') {
-        return res.status(400).json({ message: 'El contenido del mensaje no puede estar vacío.' });
+        return res.status(400).json({ message: 'El mensaje no puede estar vacío.' });
     }
-    if (!id_usuario_peticion) {
-        return res.status(401).json({ message: 'Error de autenticación: No se encontró el ID de usuario en el token.' });
+
+    // Aplicar el filtro robusto
+    if (contienePalabrasProhibidas(mensaje)) {
+        return res.status(400).json({ 
+            message: 'Tu mensaje ha sido bloqueado por contener lenguaje inapropiado.' 
+        });
     }
 
     try {
         const query = 'INSERT INTO Foro_Mensajes (id_local, id_usuario, mensaje) VALUES (?, ?, ?)';
-        await db.execute(query, [localId, id_usuario_peticion, mensaje]);
-
-        res.status(201).json({ message: 'Mensaje publicado en el foro con éxito.' });
+        await db.execute(query, [localId, id_usuario_peticion, mensaje.trim()]);
+        res.status(201).json({ message: 'Mensaje publicado con éxito.' });
     } catch (error) {
-        console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-        console.error('!!! ERROR DETALLADO AL INSERTAR EL MENSAJE !!!');
-        console.error(error);
-        console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-        res.status(500).json({
-            message: 'Error interno del servidor al publicar el mensaje.',
-            error: error.message
-        });
+        console.error('Error al insertar mensaje:', error);
+        res.status(500).json({ message: 'Error al publicar el mensaje.' });
     }
 };

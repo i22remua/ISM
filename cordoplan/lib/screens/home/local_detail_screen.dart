@@ -8,8 +8,10 @@ import '../../models/event_model.dart';
 import '../../widgets/real_time_aforo_display.dart';
 
 // ✅ IMPORTACIONES NECESARIAS
-import 'event_detail_screen.dart'; // Asumimos esta ruta para detalle de evento
-import '../chat/chat_screen.dart';   // Asumimos que la pantalla de Chat está en lib/screens/chat/
+import 'event_detail_screen.dart';
+import '../chat/chat_screen.dart';
+// FIX: Importar la pantalla de escaneo NFC
+import '../owner/aforo_nfc_screen.dart'; 
 
 class LocalDetailScreen extends StatefulWidget {
   final Local local;
@@ -43,12 +45,20 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
 
   void _startAforoSimulation() {
     _aforoTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      // Simula el aforo basado en el valor actual del modelo
       final newAforo = widget.local.aforoActual + (timer.tick % 5) - 2;
       if (!_aforoStreamController.isClosed) {
         _aforoStreamController.add(newAforo.clamp(0, widget.local.aforoMaximo));
       }
     });
+  }
+
+  // FIX: Función para navegar a la pantalla de escaneo NFC
+  void _navigateToNfcScan() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AforoNfcScreen(local: widget.local),
+      ),
+    );
   }
 
   @override
@@ -79,7 +89,7 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
             Tab(text: 'Detalles', icon: Icon(Icons.info_outline)),
             Tab(text: 'Aforo', icon: Icon(Icons.people_alt)),
             Tab(text: 'Eventos', icon: Icon(Icons.calendar_month)),
-            Tab(text: 'Foro', icon: Icon(Icons.chat_bubble_outline)), // FIX: Título de la pestaña
+            Tab(text: 'Foro', icon: Icon(Icons.chat_bubble_outline)),
           ],
         ),
       ),
@@ -89,13 +99,18 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
           _buildDetailsTab(),
           _buildAforoTab(),
           _buildEventsTab(),
-          _buildChatTab(), // Llamada al widget de Chat
+          _buildChatTab(),
         ],
       ),
+      // FIX: Añadido botón flotante para el escaneo NFC
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _navigateToNfcScan,
+        icon: const Icon(Icons.nfc),
+        label: const Text('Registrar Entrada/Salida'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
-  // Pestaña de Detalles (RF-U04) - Sin cambios
 
   Widget _buildDetailsTab() {
     return Padding(
@@ -115,7 +130,6 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
     );
   }
 
-  // Pestaña de Aforo (RF-U05 / CU5) - Sin cambios
   Widget _buildAforoTab() {
     return StreamBuilder<int>(
       stream: _aforoStreamController.stream,
@@ -131,7 +145,6 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
     );
   }
 
-  // Pestaña de Eventos (RF-U06 / CU8)
   Widget _buildEventsTab() {
     return FutureBuilder<List<Event>>(
       future: _apiService.fetchLocalEvents(_localId),
@@ -181,21 +194,18 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
     );
   }
 
-  // Pestaña de Chat (RF-U07 / CU6)
   Widget _buildChatTab() {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          // FIX: Navegar a la pantalla de chat del foro pasándole el ID del local.
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => ChatScreen(localId: widget.local.idLocal)),
           );
         },
-        child: const Text('Acceder al Foro del Local'), // FIX: Texto del botón
+        child: const Text('Acceder al Foro del Local'),
       ),
     );
   }
-
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(

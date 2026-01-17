@@ -2,9 +2,10 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'endpoints.dart'; // FIX: Importar la configuración centralizada de endpoints
 
-// Usar 10.0.2.2 para el Emulador de Android o la IP local de tu máquina
-const String _apiUrl = 'http://10.0.2.2:3000/api/users';
+// FIX: Se elimina la URL hardcodeada para usar la configuración centralizada
+// const String _apiUrl = 'http://10.0.2.2:3000/api/users';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -39,7 +40,8 @@ class AuthService {
       String firebaseUid = userCredential.user!.uid;
 
       final response = await http.post(
-        Uri.parse('$_apiUrl/sync'),
+        // FIX: Usar la variable del endpoint centralizado
+        Uri.parse(endpointUserSync),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'firebase_uid': firebaseUid,
@@ -75,7 +77,8 @@ class AuthService {
       String firebaseUid = userCredential.user!.uid;
 
       final response = await http.post(
-        Uri.parse('$_apiUrl/sync'),
+        // FIX: Usar la variable del endpoint centralizado
+        Uri.parse(endpointUserSync),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'firebase_uid': firebaseUid,

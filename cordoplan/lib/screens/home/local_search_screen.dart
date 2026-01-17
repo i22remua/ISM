@@ -45,8 +45,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
     });
 
     try {
-      // Nota: Debes implementar el endpoint de búsqueda en tu backend
-      // que maneje búsquedas por nombre, tipo, etc. (RF-U03)
+      // Llama al servicio de API para realizar la búsqueda en el backend
       final results = await _apiService.searchLocales(trimmedQuery);
       
       setState(() {

@@ -1,12 +1,13 @@
-// lib/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'services/firebase_auth_service.dart';
-import 'providers/user_provider.dart'; // Importa el UserProvider
+import 'providers/user_provider.dart';
 import 'screens/auth/login_screen.dart';
+import 'theme.dart'; // Importa el nuevo tema
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,11 +24,9 @@ class RootApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Proveedor de servicio de autenticación
         Provider<AuthService>(
           create: (_) => AuthService(),
         ),
-        // Proveedor de estado del usuario (NUEVO)
         ChangeNotifierProvider<UserProvider>(
           create: (_) => UserProvider(),
         ),
@@ -45,10 +44,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CordoPlan',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
+      theme: appTheme, // Aplica el tema personalizado
       home: LoginScreen(),
     );
   }

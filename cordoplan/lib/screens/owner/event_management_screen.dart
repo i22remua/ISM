@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../services/local_api_service.dart';
 import '../../models/event_model.dart';
 import '../../models/local_model.dart';
+import 'aforo_nfc_screen.dart'; // Importar la nueva pantalla
 
 class EventManagementScreen extends StatefulWidget {
   final Local local; 
@@ -78,7 +79,7 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
     try {
       // RF-P05 / CU12: Cancelar evento
       // La API debe verificar si el usuario es Admin o el Propietario de este local (RNF-06)
-      // await _apiService.cancelEvent(idEvento); 
+       await _apiService.cancelEvent(idEvento);
 
       setState(() {
         _eventsFuture = _fetchEvents(); // Recargar la lista
@@ -89,6 +90,14 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
     }
   }
 
+  // Navegar a la pantalla de NFC
+  void _navigateToNfcScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AforoNfcScreen(local: widget.local),
+      ),
+    );
+  }
 
   // --- UI ---
   @override
@@ -131,10 +140,24 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCreateEventDialog(context),
-        icon: const Icon(Icons.add),
-        label: const Text('Crear Evento (CU11)'),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: 'aforo_nfc', // Tag único para el Hero
+            onPressed: _navigateToNfcScreen,
+            icon: const Icon(Icons.nfc),
+            label: const Text('Control de Aforo'),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton.extended(
+            heroTag: 'crear_evento', // Tag único
+            onPressed: () => _showCreateEventDialog(context),
+            icon: const Icon(Icons.add),
+            label: const Text('Crear Evento'),
+          ),
+        ],
       ),
     );
   }

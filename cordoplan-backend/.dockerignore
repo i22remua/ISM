@@ -1,0 +1,16 @@
+# Ficheros y carpetas a ignorar por Docker
+
+# Dependencias de desarrollo
+node_modules
+npm-debug.log
+
+# Ficheros del entorno de desarrollo
+.idea
+.vscode
+
+# Ficheros de Git
+.git
+.gitignore
+
+# Fichero de configuración de Docker
+docker-compose.yml
