@@ -6,8 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const ownerOnly = ['Propietario'];
 
-// Endpoint para que un Propietario obtenga SU local
-// GET /api/owner/my-local
+
 router.get('/my-local', authMiddleware(ownerOnly), localController.getMyLocal);
 
 module.exports = router;

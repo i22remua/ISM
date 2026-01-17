@@ -6,7 +6,6 @@ import 'http_client.dart';
 class AdminApiService {
   final HttpClient _httpClient = HttpClient();
 
-  // Obtiene todos los usuarios para el panel de administración (RF-A02)
   Future<List<UserData>> getAllUsers() async {
     final response = await _httpClient.get(endpointAdminGetAllUsers, requireAuth: true);
     if (response is List) {

@@ -4,10 +4,10 @@ import 'dart:io' show Platform;
 // --- Base URL Dinámica ---
 
 // CAMBIO PARA DESARROLLO EN MÓVIL FÍSICO
-// 1. Pon esto a `true` cuando ejecutes la app en tu móvil real.
-// 2. Reemplaza 'TU_IP_DE_MAC' con la IP de tu Mac en la red Wi-Fi.
+// 1. true` cuando ejecutes la app en  móvil real.
+// 2. ReemplazaR 'macIP' con la IP de tu Mac en la red Wi-Fi.
 const bool useMacIp = true; // ¡PONER A `false` PARA EL EMULADOR!
-const String macIp = '192.168.1.142'; // <-- REEMPLAZA ESTA IP
+const String macIp = '192.168.1.142'; // <-- REEMPLAZAR ESTA IP
 
 String getBaseUrl() {
   if (Platform.isAndroid && useMacIp) {

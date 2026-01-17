@@ -335,11 +335,6 @@ const gestionarAforo = async (idLocal, idUsuario, tipo) => {
 
         const local = localCheck[0];
 
-        // FIX: Se elimina la comprobación de permisos para que todos los usuarios puedan registrar aforo
-        // if (rolUsuario !== 'Administrador' && local.id_propietario !== idUsuario) {
-        //     throw { status: 403, message: 'No tienes permiso para modificar el aforo de este local.' };
-        // }
-
         let nuevoAforo = local.aforo_actual;
 
         if (tipo === 'entrada') {

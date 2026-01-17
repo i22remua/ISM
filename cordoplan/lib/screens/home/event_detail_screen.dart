@@ -20,7 +20,7 @@ class EventDetailScreen extends StatelessWidget {
           children: <Widget>[
             Text(
               'Descripción del Evento',
-              style: Theme.of(context).textTheme.headlineSmall, // Corregido: headline6 -> headlineSmall
+              style: Theme.of(context).textTheme.headlineSmall, 
             ),
             const SizedBox(height: 8),
             Text(event.descripcion),

@@ -21,10 +21,9 @@ const contienePalabrasProhibidas = (texto) => {
 };
 
 // ----------------------------------------------------------------------
-// LÓGICA DEL CHAT (CU6)
+// LÓGICA DEL CHAT 
 // ----------------------------------------------------------------------
 
-// CU6: Enviar un mensaje a un amigo
 exports.enviarMensaje = async (req, res) => {
     const { id_usuario_peticion: id_emisor } = req.user;
     const { id_receptor, mensaje } = req.body;
@@ -52,7 +51,6 @@ exports.enviarMensaje = async (req, res) => {
     }
 };
 
-// CU6: Obtener el historial de chat con un amigo
 exports.getHistorialChat = async (req, res) => {
     const { id_usuario_peticion: id_usuario_actual } = req.user;
     const { id_amigo } = req.params;

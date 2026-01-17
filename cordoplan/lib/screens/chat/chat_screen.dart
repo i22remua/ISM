@@ -6,7 +6,6 @@ import '../../services/chat_api_service.dart';
 import '../../providers/user_provider.dart';
 
 class ChatScreen extends StatefulWidget {
-  // FIX: El ID que se recibe ahora es el del local para el foro.
   final int localId;
 
   const ChatScreen({Key? key, required this.localId}) : super(key: key);
@@ -28,7 +27,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _currentUserId = Provider.of<UserProvider>(context, listen: false).userData?.idUsuario;
     _loadMessages();
 
-    // FIX: Iniciar un temporizador para refrescar los mensajes periódicamente
     _refreshTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       _loadMessages();
     });

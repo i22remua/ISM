@@ -6,7 +6,6 @@ class FirebaseChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance; // Instancia para acceder a la autenticación
 
-  // RF-U07 / CU6: Enviar un mensaje al chat social del local
   Future<void> sendMessage(int localId, String text) async {
     final User? currentUser = _auth.currentUser;
 

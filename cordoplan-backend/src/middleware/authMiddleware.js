@@ -29,7 +29,6 @@ const authMiddleware = (requiredRoles = []) => {
 
             const user = users[0];
 
-            // --- CORRECCIÓN DEFINITIVA ---
             // Se añade una comprobación robusta para asegurar la integridad de los datos.
             if (!user || user.id_usuario === undefined || user.id_usuario === null) {
                 console.error(`ERROR CRÍTICO: El usuario con firebase_uid=${firebase_uid} no tiene un id_usuario en la base de datos.`);

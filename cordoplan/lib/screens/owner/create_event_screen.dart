@@ -27,12 +27,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   void initState() {
     super.initState();
     if (_isEditing) {
-      // Si estamos editando, rellenamos los campos con los datos del evento
       _nameController.text = widget.existingEvent!.nombre;
       _descriptionController.text = widget.existingEvent!.descripcion;
       _selectedDateTime = widget.existingEvent!.fechaHora;
     } else {
-      // Si estamos creando, inicializamos la fecha y hora
       _selectedDateTime = DateTime.now();
     }
   }
@@ -73,7 +71,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     setState(() { _isLoading = true; });
 
     try {
-      // FIX: Formatear la fecha como un string local para evitar la conversión a UTC.
       final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
       final String formattedDateTime = formatter.format(_selectedDateTime!);
 

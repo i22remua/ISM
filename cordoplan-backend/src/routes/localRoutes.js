@@ -6,7 +6,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 // --- Roles ---
 const ownerOrAdmin = ['Propietario', 'Administrador'];
-// FIX: Se añade un nuevo grupo de roles que incluye a todos los usuarios autenticados
 const allUsers = ['Usuario', 'Propietario', 'Administrador'];
 
 // ----------------------------------------------------------------------
@@ -46,7 +45,6 @@ router.post('/eventos/:id/cancel', authMiddleware(ownerOrAdmin), localController
 // RUTAS DE CONTROL DE AFORO (NFC)
 // ----------------------------------------------------------------------
 
-// FIX: Se cambia el middleware para permitir el acceso a todos los usuarios autenticados
 // POST /api/locales/:id/nfc/entrada -> Registra una entrada por NFC
 router.post('/:id/nfc/entrada', authMiddleware(allUsers), localController.registrarEntradaNfc);
 

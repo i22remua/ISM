@@ -9,7 +9,6 @@ import '../../services/local_api_service.dart';
 import '../../models/local_model.dart';
 import '../../providers/user_provider.dart';
 
-// FIX: Importar las pantallas de administrador
 import '../admin/account_management_screen.dart';
 import '../admin/aforo_monitoring_screen.dart';
 
@@ -55,7 +54,6 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: Leer el rol del usuario para construir la UI dinámicamente
     final userProvider = Provider.of<UserProvider>(context);
     final role = userProvider.userData?.rol ?? '';
 
@@ -76,7 +74,6 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
     );
   }
 
-  // FIX: Nuevo método para construir las opciones según el rol
   List<Widget> _buildMenuOptions(BuildContext context, String role) {
     if (role == 'Administrador') {
       return [

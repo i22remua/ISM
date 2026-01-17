@@ -2,10 +2,9 @@
 const db = require('../db');
 
 // ----------------------------------------------------------------------
-// GESTIÓN DE CUENTAS (CU13)
+// GESTIÓN DE CUENTAS 
 // ----------------------------------------------------------------------
 
-// CU13: Obtener una lista de todas las cuentas
 exports.getAllCuentas = async (req, res) => {
     try {
         const [users] = await db.execute('SELECT id_usuario, nombre, email, rol, firebase_uid, nfc_tag_id FROM Usuarios ORDER BY id_usuario DESC');
@@ -16,7 +15,6 @@ exports.getAllCuentas = async (req, res) => {
     }
 };
 
-// CU13: Modificar datos de cualquier cuenta
 exports.modificarCuenta = async (req, res) => {
     const { id_usuario_objetivo } = req.params;
     const { nombre, email, rol } = req.body;
@@ -59,7 +57,6 @@ exports.modificarCuenta = async (req, res) => {
 };
 
 
-// CU13: Eliminar una cuenta de usuario
 exports.eliminarCuenta = async (req, res) => {
     const { id_usuario_objetivo } = req.params;
 
@@ -83,10 +80,9 @@ exports.eliminarCuenta = async (req, res) => {
 
 
 // ----------------------------------------------------------------------
-// GESTIÓN DE LOCALES (CU14)
+// GESTIÓN DE LOCALES 
 // ----------------------------------------------------------------------
 
-// CU14: Gestionar (Activar/Desactivar/Eliminar) locales registrados.
 exports.gestionarLocalAdmin = async (req, res) => {
     const { id_local } = req.params;
     const { accion } = req.body; 
@@ -119,10 +115,9 @@ exports.gestionarLocalAdmin = async (req, res) => {
 };
 
 // ----------------------------------------------------------------------
-// MONITOREO (RF-A05)
+// MONITOREO 
 // ----------------------------------------------------------------------
 
-// RF-A05: Monitorear el estado del sistema y aforos
 exports.monitorearAforoGlobal = async (req, res) => {
     try {
         const [monitoreo] = await db.execute(`

@@ -7,7 +7,6 @@ import 'aforo_nfc_screen.dart'; // Importar la nueva pantalla
 
 class EventManagementScreen extends StatefulWidget {
   final Local local; 
-  // Opcional: Podrías necesitar el id del usuario para validación (RNF-06)
 
   const EventManagementScreen({Key? key, required this.local}) : super(key: key);
 
@@ -49,20 +48,15 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
       _selectedTime!.hour,
       _selectedTime!.minute,
     );
-
-    // Asumimos que el ID del creador se obtiene del usuario autenticado
-    // int creatorId = 1; 
     
     final Map<String, dynamic> eventData = {
       'id_local': widget.local.idLocal,
       'nombre': _nameController.text,
       'descripcion': _descriptionController.text,
       'fecha_hora': finalDateTime.toIso8601String(),
-      // 'creado_por': creatorId, 
     };
 
     try {
-      // RF-P05 / CU11: Crear evento
       await _apiService.createEvent(eventData);
       
       setState(() {
@@ -77,8 +71,6 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
   
   Future<void> _cancelEvent(int idEvento) async {
     try {
-      // RF-P05 / CU12: Cancelar evento
-      // La API debe verificar si el usuario es Admin o el Propietario de este local (RNF-06)
        await _apiService.cancelEvent(idEvento);
 
       setState(() {

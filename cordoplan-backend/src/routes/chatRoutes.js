@@ -8,13 +8,11 @@ const authMiddleware = require('../middleware/authMiddleware');
 const allAuthenticated = ['Usuario', 'Propietario', 'Administrador'];
 
 // ----------------------------------------------------------------------
-// RUTAS DEL CHAT (CU6)
+// RUTAS DEL CHAT 
 // ----------------------------------------------------------------------
 
-// CU6: Enviar un mensaje a un amigo
 router.post('/send', authMiddleware(allAuthenticated), chatController.enviarMensaje);
 
-// CU6: Obtener el historial de chat con un amigo
 router.get('/history/:id_amigo', authMiddleware(allAuthenticated), chatController.getHistorialChat);
 
 

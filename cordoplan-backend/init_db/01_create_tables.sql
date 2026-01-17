@@ -1,6 +1,5 @@
 -- cordoplan-backend/init_db/01_create_tables.sql
 
--- 1. LIMPIEZA (Solo para desarrollo)
 
 DROP TABLE IF EXISTS Foro_Mensajes;
 DROP TABLE IF EXISTS Amigos;
@@ -80,7 +79,6 @@ INSERT INTO Usuarios (nombre, email, rol, firebase_uid, nfc_tag_id) VALUES
 ('Admin CordoPlan', 'admin@cordoplan.com', 'Administrador', 'NXct4OpZH3SugmzPusZUE4xTg8G3', 'NFC-A001'),
 ('Propietario Bar', 'owner@local.com', 'Propietario', 'FIREBASE_UID_OWNER_456', 'NFC-P001');
 
--- CORRECCIÓN: Se añade 'activo' explícitamente para asegurar que el local de prueba siempre se cree como activo.
 INSERT INTO Locales (id_propietario, nombre, descripcion, ubicacion, latitud, longitud, aforo_maximo, aforo_actual, tipo_ocio, activo) VALUES
 (
     (SELECT id_usuario FROM Usuarios WHERE email='owner@local.com'),

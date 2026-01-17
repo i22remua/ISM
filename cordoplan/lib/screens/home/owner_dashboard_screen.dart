@@ -4,16 +4,14 @@ import '../../models/local_model.dart'; // Importamos el modelo Local
 import '../../services/local_api_service.dart'; // Para obtener los datos del local del dueño
 import '../owner/create_local_screen.dart';
 import '../owner/event_management_screen.dart';
-// Importamos AuthService para el Logout
 import '../../services/firebase_auth_service.dart';
 import '../auth/login_screen.dart'; // Para redirigir al login
-// FIX: Importar las nuevas pantallas de administrador
 import '../admin/account_management_screen.dart';
 import '../admin/aforo_monitoring_screen.dart';
 
 class OwnerDashboardScreen extends StatefulWidget {
   final String userRole;
-  final int userId; // ID del usuario de MySQL
+  final int userId; 
 
   const OwnerDashboardScreen({
     Key? key,
@@ -45,8 +43,7 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
       _isLoadingLocal = true;
     });
     try {
-      // Nota: Debes implementar un endpoint en el backend: GET /api/owner/my-local
-      // que use req.user.id_usuario_peticion para buscar en la tabla Locales.
+     
       final local = await _apiService.fetchOwnerLocal(widget.userId);
       setState(() {
         _myLocal = local;
@@ -92,7 +89,6 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
             // --- GESTIÓN DE PROPIETARIOS ---
             _buildManagementStatus(),
 
-            // Botón Crear/Modificar Local (RF-P02, RF-P03)
             _buildCard(
               context,
               _myLocal == null ? 'Registrar Nuevo Local' : 'Modificar Local',
@@ -108,7 +104,6 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
               },
             ),
 
-            // Gestión de Eventos (RF-P05)
             _buildCard(
               context,
               'Gestión de Eventos',
@@ -133,7 +128,6 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
                 'Gestionar Cuentas',
                 'Administrar roles y usuarios.',
                 Icons.supervised_user_circle,
-                // FIX: Navegación a la pantalla de gestión de cuentas
                 () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccountManagementScreen())),
               ),
               _buildCard(
@@ -141,7 +135,6 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
                 'Monitoreo de Aforo Global',
                 'Ver aforo de todos los locales en tiempo real.',
                 Icons.monitor_heart,
-                // FIX: Navegación a la pantalla de monitoreo de aforo
                 () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AforoMonitoringScreen())),
               ),
             ],

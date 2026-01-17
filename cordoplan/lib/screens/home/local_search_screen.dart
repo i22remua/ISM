@@ -24,7 +24,6 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
     super.dispose();
   }
 
-  // RF-U03: Realiza la búsqueda de locales en el backend
   void _performSearch(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.isEmpty) {

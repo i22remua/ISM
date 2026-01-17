@@ -51,18 +51,15 @@ class _AforoNfcScreenState extends State<AforoNfcScreen> {
 
             if (mode == 'entrada') {
               result = await _apiService.registrarEntradaNfc(widget.local.idLocal);
-              // FIX: Mensaje personalizado para la entrada
               successMessage = '¡Entrada registrada con éxito!\nAutomáticamente has entrado en el sorteo de un bonocopas para esta noche. ¡Suerte!';
             } else {
               result = await _apiService.registrarSalidaNfc(widget.local.idLocal);
-              // FIX: Mensaje personalizado para la salida
               successMessage = '¡Salida registrada correctamente! Gracias por tu visita.';
             }
 
             await NfcManager.instance.stopSession();
             setState(() {
               _aforoActual = result['aforoActual'];
-              // FIX: Usar el nuevo mensaje personalizado
               _statusMessage = successMessage;
               _isProcessing = false;
             });

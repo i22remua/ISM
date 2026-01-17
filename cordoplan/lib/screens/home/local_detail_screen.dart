@@ -7,10 +7,8 @@ import '../../services/local_api_service.dart';
 import '../../models/event_model.dart';
 import '../../widgets/real_time_aforo_display.dart';
 
-// ✅ IMPORTACIONES NECESARIAS
 import 'event_detail_screen.dart';
 import '../chat/chat_screen.dart';
-// FIX: Importar la pantalla de escaneo NFC
 import '../owner/aforo_nfc_screen.dart'; 
 
 class LocalDetailScreen extends StatefulWidget {
@@ -52,7 +50,6 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
     });
   }
 
-  // FIX: Función para navegar a la pantalla de escaneo NFC
   void _navigateToNfcScan() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -102,7 +99,6 @@ class _LocalDetailScreenState extends State<LocalDetailScreen> with SingleTicker
           _buildChatTab(),
         ],
       ),
-      // FIX: Añadido botón flotante para el escaneo NFC
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _navigateToNfcScan,
         icon: const Icon(Icons.nfc),

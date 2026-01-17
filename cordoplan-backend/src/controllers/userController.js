@@ -7,12 +7,11 @@ const generateNfcTagId = () => {
 };
 
 // ----------------------------------------------------------------------
-// AUTENTICACIÓN Y REGISTRO (RF-U01, RF-P01)
+// AUTENTICACIÓN Y REGISTRO 
 // ----------------------------------------------------------------------
 
 // Sincroniza el usuario de Firebase con MySQL
 exports.sincronizarUsuario = async (req, res) => {
-    // isNewUser=true -> Registro; isNewUser=false -> Inicio de Sesión
     const { firebase_uid, email, nombre, isNewUser } = req.body;
     let { rol } = req.body; // Se define como let para poder modificarlo
 
@@ -23,7 +22,6 @@ exports.sincronizarUsuario = async (req, res) => {
 
     try {
         if (isNewUser) {
-            // --- REGISTRO (RF-U01, RF-P01) ---
             if (!nombre) { // Ya no se comprueba el rol aquí
                 return res.status(400).json({ message: 'Falta el nombre para el nuevo registro.' });
             }
@@ -70,10 +68,9 @@ exports.sincronizarUsuario = async (req, res) => {
 
 
 // ----------------------------------------------------------------------
-// NFC SOCIAL (RF-U08)
+// NFC SOCIAL 
 // ----------------------------------------------------------------------
 
-// RF-U08 / CU7: Agregar amigo por ID de pulsera NFC
 exports.agregarAmigoNFC = async (req, res) => {
     const { id_usuario_peticion } = req.user;
     const { nfc_tag_id_objetivo } = req.body;

@@ -13,7 +13,6 @@ class NfcManagerService {
   
   get Ndef => null;
 
-  // RF-P04: Función de gestión de aforo (Propietario/Admin)
   Future<Map<String, dynamic>> updateAforo(int idLocal, {required bool isEntry}) async {
     final url = isEntry 
         ? endpointAforoEntrada(idLocal) 
@@ -26,7 +25,6 @@ class NfcManagerService {
     );
   }
 
-  // RF-U08 / CU7: Lógica para agregar amigo mediante pulsera NFC
   Future<Map<String, dynamic>> addFriendByNfc(String nfcTagIdObjetivo) async {
     return await _httpClient.post(
       endpointFriendsNfc,
@@ -37,17 +35,14 @@ class NfcManagerService {
     );
   }
   
-  // RF-U08: Iniciar la sesión de lectura NFC
   Future<void> startNfcReadingSession({required Function(String tagId) onTagDiscovered}) async {
     
-    // Corrección de 'isAvailable' a 'checkAvailability'
     if (await NfcManager.instance.isAvailable() == false) {
       // Usar la verificación simple aquí es suficiente si la app maneja la indisponibilidad.
       // throw Exception("NFC no está disponible en este dispositivo.");
     }
     
     NfcManager.instance.startSession(
-      // Corrección de 'pollingOptions' (Error de argumento requerido)
       pollingOptions: {}, 
       onDiscovered: (nfc.NfcTag tag) async {
         final ndef = Ndef.from(tag);

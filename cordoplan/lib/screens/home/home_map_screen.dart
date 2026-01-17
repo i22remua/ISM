@@ -10,8 +10,7 @@ import 'local_search_screen.dart'; // Para navegación a búsqueda
 
 class HomeMapScreen extends StatefulWidget {
   final String userRole;
-  // NOTA: Para producción, también se debería pasar el userId de MySQL aquí
-  // final int userId;
+
 
   const HomeMapScreen({Key? key, required this.userRole}) : super(key: key);
 
@@ -44,8 +43,8 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
     });
 
     try {
-      await _determinePosition(); // RNF-11
-      final locales = await _apiService.fetchLocales(); // RF-U02
+      await _determinePosition(); 
+      final locales = await _apiService.fetchLocales(); 
       _updateMarkers(locales);
     } catch (e) {
       debugPrint("Error al inicializar: $e");
@@ -59,7 +58,6 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
     }
   }
 
-  // RNF-11: Obtiene ubicación y ajusta la posición inicial
   Future<void> _determinePosition() async {
     try {
       LocationPermission permission = await Geolocator.checkPermission();
@@ -87,7 +85,6 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
     }
   }
 
-  // RF-U03: Realiza la búsqueda de locales
   Future<void> _searchLocales(String query) async {
     setState(() { _isLoading = true; });
     try {
@@ -113,7 +110,7 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
           position: local.toLatLng(),
           infoWindow: InfoWindow(
             title: local.nombre,
-            snippet: "Aforo: ${local.aforoActual}/${local.aforoMaximo}", // RF-U05
+            snippet: "Aforo: ${local.aforoActual}/${local.aforoMaximo}", 
             onTap: () => _navigateToLocalDetails(local),
           ),
         );
@@ -138,7 +135,6 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
       appBar: AppBar(
         title: const Text("CordoPlan - Mapa de Ocio"),
         actions: [
-          // Navegación a la pantalla de búsqueda (RF-U03)
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
@@ -156,13 +152,12 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
               icon: const Icon(Icons.business_center),
               tooltip: "Gestión de Local",
               onPressed: () {
-                // Navegar al Dashboard. Usarás el userId que debes obtener en el LoginScreen.
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => OwnerDashboardScreen(
                       userRole: widget.userRole,
-                      userId: 1, // ❌ REEMPLAZAR con el ID real del usuario del Login
+                      userId: 1, 
                     ),
                   ),
                 );
@@ -187,9 +182,9 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
                 CameraUpdate.newLatLng(_initialPosition),
               );
             },
-            myLocationEnabled: _locationPermissionGranted, // RNF-11
+            myLocationEnabled: _locationPermissionGranted, 
             myLocationButtonEnabled: _locationPermissionGranted,
-            markers: _markers, // RF-U02
+            markers: _markers, 
           ),
 
           if (_isLoading)

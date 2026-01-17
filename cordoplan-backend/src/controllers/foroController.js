@@ -1,6 +1,5 @@
 const db = require('../db');
 
-// Lista de palabras prohibidas normalizada (sin acentos)
 const PALABRAS_PROHIBIDAS = [
     'puto', 'puta', 'mierda', 'cabron', 'gilipollas', 'maricon', 
     'zorra', 'joder', 'cono', 'pendejo', 'idiota', 'imbecil',

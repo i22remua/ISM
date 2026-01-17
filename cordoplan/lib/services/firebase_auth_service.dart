@@ -2,10 +2,7 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
-import 'endpoints.dart'; // FIX: Importar la configuración centralizada de endpoints
-
-// FIX: Se elimina la URL hardcodeada para usar la configuración centralizada
-// const String _apiUrl = 'http://10.0.2.2:3000/api/users';
+import 'endpoints.dart'; 
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -27,7 +24,6 @@ class AuthService {
     throw Exception('Formato de respuesta inesperado del servidor.');
   }
 
-  // RF-U01 / CU1: Registro y Sincronización con MySQL
   Future<Map<String, dynamic>> registerAndSync(String email, String password, String name, String role) async {
     try {
       // 1. Registro en Firebase Auth
@@ -40,7 +36,6 @@ class AuthService {
       String firebaseUid = userCredential.user!.uid;
 
       final response = await http.post(
-        // FIX: Usar la variable del endpoint centralizado
         Uri.parse(endpointUserSync),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -64,7 +59,6 @@ class AuthService {
     }
   }
 
-  // RF-U01 / CU2: Inicio de Sesión y Sincronización
   Future<Map<String, dynamic>> signInAndSync(String email, String password) async {
     try {
       // 1. Inicio de sesión en Firebase Auth
@@ -77,7 +71,6 @@ class AuthService {
       String firebaseUid = userCredential.user!.uid;
 
       final response = await http.post(
-        // FIX: Usar la variable del endpoint centralizado
         Uri.parse(endpointUserSync),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({

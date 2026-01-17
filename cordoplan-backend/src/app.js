@@ -3,27 +3,23 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const firebaseAdmin = require('firebase-admin');
-const dbPool = require('./db'); // Importar el pool de DB [cite: 150]
+const dbPool = require('./db'); // Pool de conexiones a MySQL
 const cors = require('cors'); // Recomendado para evitar bloqueos de red
 
 // 1. CARGA DE CONFIGURACIÓN Y SERVICIOS
 // =====================================
 
-dotenv.config(); // Carga DB_HOST, DB_USER, etc. [cite: 144, 145]
+dotenv.config();
 
-// Importación de Rutas [cite: 162]
-const userRoutes = require('./routes/userRoutes');   // [cite: 165, 168]
+const userRoutes = require('./routes/userRoutes');   
 const ownerRoutes = require('./routes/ownerRoutes');
-const adminRoutes = require('./routes/adminRoutes'); // [cite: 163, 166]
-const localRoutes = require('./routes/localRoutes'); // [cite: 164, 167]
+const adminRoutes = require('./routes/adminRoutes'); 
+const localRoutes = require('./routes/localRoutes'); 
 const foroRoutes = require('./routes/foroRoutes');
 
-// Inicialización de Express [cite: 148, 149]
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 2. CONFIGURACIÓN DE FIREBASE ADMIN (RNF-06: Seguridad [cite: 41, 42])
-// ====================================================================
 
 try {
     const serviceAccount = require('../cordoplan-uco-service-account.json');
@@ -40,15 +36,13 @@ try {
 // ====================================================================
 
 app.use(cors()); // Permite peticiones desde dispositivos externos en la red local
-app.use(express.json()); // Middleware para parsear JSON [cite: 147]
+app.use(express.json()); 
 
-// Rutas específicas para roles y funcionalidades [cite: 4, 154]
 app.use('/api/users', userRoutes);
 app.use('/api/owner', ownerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/foro', foroRoutes);
 
-// Rutas generales de locales [cite: 167]
 app.use('/api/locales', localRoutes);
 
 app.get('/', (req, res) => {
@@ -69,7 +63,7 @@ const startServer = () => {
 const connectWithRetry = async (retries = 5, delay = 5000) => {
     while (retries > 0) {
         try {
-            const connection = await dbPool.getConnection(); // [cite: 150]
+            const connection = await dbPool.getConnection(); 
             console.log('✅ Conexión exitosa al Pool de MySQL.');
             connection.release();
             return;
@@ -85,7 +79,6 @@ const connectWithRetry = async (retries = 5, delay = 5000) => {
     }
 };
 
-// 5. INICIO DE LA APLICACIÓN [cite: 148]
 // ====================================================================
 
 connectWithRetry().then(() => {

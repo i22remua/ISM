@@ -84,7 +84,6 @@ class HttpClient {
   }
 
   dynamic _handleResponse(http.Response response) {
-    // FIX: Manejar respuestas vacías en operaciones exitosas (como DELETE)
     if (response.body.isEmpty) {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return {}; // Devuelve un objeto vacío para indicar éxito

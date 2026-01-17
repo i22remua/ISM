@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const adminOnly = ['Administrador']; // Solo Administrador puede acceder
 
 // ----------------------------------------------------------------------
-// RUTAS DE GESTIÓN DE CUENTAS (CU13)
+// RUTAS DE GESTIÓN DE CUENTAS 
 // ----------------------------------------------------------------------
 
 // Obtener una lista de todas las cuentas
@@ -20,7 +20,7 @@ router.put('/users/:id_usuario_objetivo', authMiddleware(adminOnly), adminContro
 router.delete('/users/:id_usuario_objetivo', authMiddleware(adminOnly), adminController.eliminarCuenta);
 
 // ----------------------------------------------------------------------
-// RUTAS DE GESTIÓN DE LOCALES (CU14)
+// RUTAS DE GESTIÓN DE LOCALES 
 // ----------------------------------------------------------------------
 
 // Gestionar (Activar/Desactivar/Eliminar) locales registrados
@@ -28,7 +28,7 @@ router.post('/locales/:id_local', authMiddleware(adminOnly), adminController.ges
 
 
 // ----------------------------------------------------------------------
-// RUTAS DE MONITOREO (RF-A05)
+// RUTAS DE MONITOREO 
 // ----------------------------------------------------------------------
 
 // Monitorear aforo global y estado del sistema

@@ -26,7 +26,6 @@ class UserData {
     );
   }
 
-  // FIX: Añadido el constructor `fromJson` que faltaba
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
       idUsuario: json['id_usuario'] ?? 0,

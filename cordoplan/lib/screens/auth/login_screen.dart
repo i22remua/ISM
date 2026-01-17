@@ -86,11 +86,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Logo de la aplicación
                 Image.asset(
                   'assets/images/logo.png', 
-                  height: 180, // Ajusta la altura según tus preferencias
+                  height: 180, 
                 ),
                 const SizedBox(height: 32),
 
-                // Título de bienvenida
                 Text(
                   'Bienvenido de nuevo',
                   textAlign: TextAlign.center,
